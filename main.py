@@ -8,12 +8,16 @@ import os
 
 st.set_page_config(page_title = "Simple Finance App", page_icon = "💸", layout = "wide")
 
+if "categories" not in st.session_state:
+    st.session_state.categories = {
+        "Uncategorized": []
+    }
+
 def load_transactions (file):
     try:
-        df = pd.read_csv(file, header = None)
+        df = pd.read_csv(file, header = None, delimiter = ",")
         df.columns = ["Date", "Details", "Credit", "Debit", "Total Due" ]
-        #df["Date"] = pd.to_datetime(df["Date"], format ="%d %b %Y") # converts date values to ones Pandas can understand
-
+        df["Date"] = pd.to_datetime(df["Date"], format = "%m/%d/%Y")
 
         st.write(df)
         return df
@@ -32,6 +36,7 @@ def main():
         if df is not None:
             debits_df = df["Debit"].copy()
             credits_df = df["Credit"].copy()
+
             tab1, tab2 = st.tabs(["Payments (Debits)", "Expenses (Credits)"])
             with tab1:
                 st.write(debits_df)
